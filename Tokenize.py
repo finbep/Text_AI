@@ -1,22 +1,32 @@
-# Function to tokenize a conversation from a text file
-def tokenize_conversation(file_path):
-    # Read the conversation from the file
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.preprocessing import Normalizer
+import nltk
+nltk.download('punkt')
+from nltk.tokenize import word_tokenize
+
+# 1. Reading data from a text file
+def read_data(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
-        conversation = file.read()
-    
-    # Splitting the conversation into lines
-    lines = conversation.strip().split('\n')
-    
-    # Tokenizing each line into words
-    # Assuming each line is in the format "Speaker: speech"
-    tokenized_conversation = [line.split(': ')[1].split() for line in lines if ': ' in line]
-    
-    return tokenized_conversation
+        text = file.read()
+    return text
 
-# Example usage
-file_path = 'conversation.txt'  # Make sure to use the correct path to your text file
-tokenized_conversation = tokenize_conversation(file_path)
+# 2. Tokenization
+def tokenize_text(text):
+    return word_tokenize(text)
 
-# Print the tokenized conversation to verify
-for line in tokenized_conversation:
-    print(line)
+# Assuming the data is in 'data.txt'
+file_path = 'data.txt'
+text = read_data(file_path)
+tokens = tokenize_text(text)
+
+# Since TfidfVectorizer expects raw text, it internally tokenizes the text.
+# We directly move to vectorization using the original text data.
+# 3. Vectorization
+vectorizer = TfidfVectorizer()
+vectorized_data = vectorizer.fit_transform([text])  # Passing text as a list
+
+# 4. Normalization
+normalizer = Normalizer()
+normalized_data = normalizer.fit_transform(vectorized_data)
+
+# Now 'normalized_data' is ready for machine learning models
