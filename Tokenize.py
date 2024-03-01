@@ -1,6 +1,9 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import Normalizer
 import nltk
+from scipy.sparse import save_npz
+
+# Assuming the nltk 'punkt' tokenizer is needed
 nltk.download('punkt')
 from nltk.tokenize import word_tokenize
 
@@ -10,23 +13,25 @@ def read_data(file_path):
         text = file.read()
     return text
 
-# 2. Tokenization
+# 2. Tokenization (demonstrated but not used directly in vectorization)
 def tokenize_text(text):
     return word_tokenize(text)
 
-# Assuming the data is in 'data.txt'
+# Reading and tokenizing the text data
 file_path = 'data.txt'
 text = read_data(file_path)
-tokens = tokenize_text(text)
+tokens = tokenize_text(text)  # Tokenized but not directly used in the next step
 
-# Since TfidfVectorizer expects raw text, it internally tokenizes the text.
-# We directly move to vectorization using the original text data.
-# 3. Vectorization
+# 3. Vectorization (TF-IDF)
 vectorizer = TfidfVectorizer()
-vectorized_data = vectorizer.fit_transform([text])  # Passing text as a list
+vectorized_data = vectorizer.fit_transform([text])  # Vectorizing the text
 
 # 4. Normalization
 normalizer = Normalizer()
 normalized_data = normalizer.fit_transform(vectorized_data)
 
-# Now 'normalized_data' is ready for machine learning models
+# Saving the normalized data to a file
+normalized_data_file = 'normalized_data.npz'
+save_npz(normalized_data_file, normalized_data)
+
+print(f'Normalized data saved to {normalized_data_file}')
